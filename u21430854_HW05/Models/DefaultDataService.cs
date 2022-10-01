@@ -9,7 +9,67 @@ namespace u21430854_HW05.Models
     public class DefaultDataService
     {
         public static string connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=Library;Integrated Security=True";
-        SqlConnection connection = new SqlConnection(connectionString);
+        SqlConnection connection;
+
+        public List<Types> GetTypes()
+        {
+            List<Types> allTypes = new List<Types>();
+            connection = new SqlConnection(connectionString);
+
+            try
+            {
+                SqlCommand selectTypes = new SqlCommand("select * from types", connection);
+                connection.Open();
+
+                SqlDataReader readTypes = selectTypes.ExecuteReader();
+                while(readTypes.Read())
+                {
+                    allTypes.Add(new Types()
+                    {
+                        id = Convert.ToInt32(readTypes["typeId"]),
+                        name = readTypes["name"].ToString()
+                    });
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            { connection.Close(); }
+
+            return allTypes;
+        }
+
+        public List<Authors> GetAuthors()
+        {
+            List<Authors> allAuthors = new List<Authors>();
+            connection = new SqlConnection(connectionString);
+
+            try
+            {
+                SqlCommand selectAuthors = new SqlCommand("select authorId, surname from authors", connection);
+                connection.Open();
+
+                SqlDataReader readAuthors = selectAuthors.ExecuteReader();
+                while (readAuthors.Read())
+                {
+                    allAuthors.Add(new Authors()
+                    {
+                        id = Convert.ToInt32(readAuthors["authorId"]),
+                        surname = readAuthors["surname"].ToString()
+                    });
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            { connection.Close(); }
+
+            return allAuthors;
+        }
 
         public List<Books> GetBooks() 
         {
