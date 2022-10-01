@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Super Duper Libraries</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")    
+</head>
+<body>
+    <div class="navbar bg-dark navbar-dark navbar-expand-sm fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Super Duper-Library System</a>
+            </div>
+            <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#collapsible">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div id="collapsible" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class="nav-item"> <a class="nav-link" href="@Url.Action("Index", "Home")">Books</a> </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Super Duper Libraries</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
