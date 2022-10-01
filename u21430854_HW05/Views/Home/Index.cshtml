@@ -15,18 +15,23 @@
 <h2>Books</h2><hr/>
 
 <div class="container-fluid mb-4">
-    @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
-    {        
-        <div class="row">
-            <input class="search col-md-3 col-sm-12" id="book-name" name="bookName" type="text" placeholder="Search book name.." />
+    <div class="row">
+        @using (Html.BeginForm("Search", "Home", FormMethod.Post, new { @class = "col-10"}))
+        {
+            <div class="row">
+                <input class="search col-5" id="book-name" name="bookName" type="text" placeholder="Search book name.." />
 
-            @Html.DropDownList("author", new SelectList(DefaultVM.bookAuthors, "id", "surname"), "Search author", new { @class = "search col-md-2 col-sm-6" })
-            @Html.DropDownList("type", new SelectList(DefaultVM.bookTypes, "id", "name"), "Search genre", new { @class = "search col-md-2 col-sm-6" })
+                @Html.DropDownList("authorid", new SelectList(DefaultVM.bookAuthors, "id", "surname"), "Search author", new { @class = "search col-2" })
+                @Html.DropDownList("typeid", new SelectList(DefaultVM.bookTypes, "id", "name"), "Search genre", new { @class = "search col-2" })
 
-            <input type="submit" class="btn btn-success search col-md-2 col-sm-4" value="Search" />
-            <button class="btn btn-danger search col-md-2 col-sm-4">Clear search</button>
-        </div>
-    }    
+                <input type="submit" class="btn btn-success search col-2" value="Search" />
+            </div>
+        }
+
+        <a class="btn btn-danger col-2" href="@Url.Action("Index", "Home")">Clear search</a>
+    </div>
+    
+    
 </div>
 
 <table class="table table-striped">

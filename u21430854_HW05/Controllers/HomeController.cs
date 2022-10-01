@@ -23,9 +23,11 @@ namespace u21430854_HW05.Controllers
         }
 
         [HttpPost]
-        public ActionResult Index(string bookName, string author, string type)
+        public ActionResult Search(string bookName, string authorid, string typeid)
         {
-            return View();
+            DefaultVM vm = new DefaultVM();
+            vm.books = dataService.SearchBooks(bookName, typeid, authorid);
+            return View("Index", vm);
         }
 
         public ActionResult BookDetails()

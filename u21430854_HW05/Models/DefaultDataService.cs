@@ -158,9 +158,63 @@ namespace u21430854_HW05.Models
             return status;
         }
 
-        public List<Books> SearchBooks(string book, string type, string author)
+        public List<Books> SearchBooks(string bookname, string typeid, string authorid)
         {
             List<Books> filteredBooks = new List<Books>();
+            connection = new SqlConnection(connectionString);
+
+            try
+            {
+                string bookQuery = "select b.bookId as bookId, b.name as bookName, b.pagecount as pageCount, " +
+                                    "b.point as points, a.authorId as authorId, a.surname as authorSurname, " +
+                                    "t.typeId as typeId, t.name as typeName from books b " +
+                                    "INNER JOIN authors a ON b.authorId = a.authorId " +
+                                    "INNER JOIN types t ON b.typeId = t.typeId " +
+                                    "WHERE b.name LIKE '%" + bookname + "%'";
+
+                if (!String.IsNullOrEmpty(typeid))
+                {
+                    bookQuery += " AND t.typeId = " + typeid;
+                }
+                if (!String.IsNullOrEmpty(authorid))
+                {
+                    bookQuery += " AND a.authorId = " + authorid;
+                }
+
+                SqlCommand selectBooks = new SqlCommand(bookQuery, connection);
+                connection.Open();
+
+                SqlDataReader readBooks = selectBooks.ExecuteReader();
+                while (readBooks.Read())
+                {
+                    Books book = new Books();
+                    book.id = Convert.ToInt32(readBooks["bookId"]);
+                    book.name = readBooks["bookName"].ToString();
+                    book.pageCount = Convert.ToInt32(readBooks["pageCount"]);
+                    book.point = Convert.ToInt32(readBooks["points"]);
+                    book.author = new Authors()
+                    {
+                        id = Convert.ToInt32(readBooks["authorId"]),
+                        surname = readBooks["authorSurname"].ToString()
+                    };
+                    book.genre = new Types()
+                    {
+                        id = Convert.ToInt32(readBooks["typeId"]),
+                        name = readBooks["typeName"].ToString()
+                    };
+
+                    //get book status
+                    book.status = SetBookStatus(book.id);
+
+                    filteredBooks.Add(book);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            { connection.Close(); }
 
             return filteredBooks;
         }
