@@ -9,9 +9,9 @@ namespace u21430854_HW05.ViewModels
 {
     public class DefaultVM
     {
-        public List<Types> bookTypes { get; set; }
+        public static List<Types> bookTypes { get; set; }
 
-        public List<Authors> bookAuthors { get; set; }
+        public static List<Authors> bookAuthors { get; set; }
 
         public List<Books> books { get; set; }
     }

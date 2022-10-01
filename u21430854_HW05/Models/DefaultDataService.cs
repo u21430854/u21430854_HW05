@@ -74,8 +74,88 @@ namespace u21430854_HW05.Models
         public List<Books> GetBooks() 
         {
             List<Books> allBooks = new List<Books>();
+            connection = new SqlConnection(connectionString);
+
+            try
+            {
+                string bookQuery = "select b.bookId as bookId, b.name as bookName, b.pagecount as pageCount, " +
+                                    "b.point as points, a.authorId as authorId, a.surname as authorSurname, " +
+                                    "t.typeId as typeId, t.name as typeName from books b " +
+                                    "INNER JOIN authors a ON b.authorId = a.authorId " +
+                                    "INNER JOIN types t ON b.typeId = t.typeId";
+                SqlCommand selectBooks = new SqlCommand(bookQuery, connection);
+
+                connection.Open();
+
+                SqlDataReader readBooks = selectBooks.ExecuteReader();
+                while(readBooks.Read())
+                {
+                    Books book = new Books();
+                    book.id = Convert.ToInt32(readBooks["bookId"]);
+                    book.name = readBooks["bookName"].ToString();
+                    book.pageCount = Convert.ToInt32(readBooks["pageCount"]);
+                    book.point = Convert.ToInt32(readBooks["points"]);
+                    book.author = new Authors()
+                    {
+                        id = Convert.ToInt32(readBooks["authorId"]),
+                        surname = readBooks["authorSurname"].ToString()
+                    };
+                    book.genre = new Types()
+                    {
+                        id = Convert.ToInt32(readBooks["typeId"]),
+                        name = readBooks["typeName"].ToString()
+                    };
+
+                    //get book status
+                    book.status = SetBookStatus(book.id);
+
+                    allBooks.Add(book);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            { connection.Close(); }
 
             return allBooks;
+        }
+
+        public string SetBookStatus(int id)
+        {
+            string status = "";
+            connection = new SqlConnection(connectionString);
+
+            try
+            {
+                //book status is determined using a stored procedure that accepts book Id and returns 'available' or 'out'
+                //create command object for stored procedure
+                SqlCommand storedProc = new SqlCommand("sp_BookStatus", connection);
+                storedProc.CommandType = System.Data.CommandType.StoredProcedure;
+
+                //add input (book id) parameter to stored procedure and execute
+                storedProc.Parameters.AddWithValue("@BookId", id);
+
+                //add output parameter to stored procedure
+                storedProc.Parameters.Add("@BookStatus", System.Data.SqlDbType.VarChar, 50);
+                storedProc.Parameters["@BookStatus"].Direction = System.Data.ParameterDirection.Output;
+                connection.Open();
+                                
+                //execute
+                storedProc.ExecuteNonQuery();
+
+                //store output parameter
+                status = storedProc.Parameters["@BookStatus"].Value.ToString();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            { connection.Close(); }
+
+            return status;
         }
 
         public List<Books> SearchBooks(string book, string type, string author)

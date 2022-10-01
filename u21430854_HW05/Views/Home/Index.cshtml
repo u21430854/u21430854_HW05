@@ -20,8 +20,8 @@
         <div class="row">
             <input class="search col-md-3 col-sm-12" id="book-name" name="bookName" type="text" placeholder="Search book name.." />
 
-            @Html.DropDownList("author", new SelectList(Model.bookAuthors, "id", "surname"), "Search author", new { @class = "search col-md-2 col-sm-6" })
-            @Html.DropDownList("type", new SelectList(Model.bookTypes, "id", "name"), "Search genre", new { @class = "search col-md-2 col-sm-6" })
+            @Html.DropDownList("author", new SelectList(DefaultVM.bookAuthors, "id", "surname"), "Search author", new { @class = "search col-md-2 col-sm-6" })
+            @Html.DropDownList("type", new SelectList(DefaultVM.bookTypes, "id", "name"), "Search genre", new { @class = "search col-md-2 col-sm-6" })
 
             <input type="submit" class="btn btn-success search col-md-2 col-sm-4" value="Search" />
             <button class="btn btn-danger search col-md-2 col-sm-4">Clear search</button>
@@ -45,7 +45,28 @@
     <tbody>
         @if (Model.books.Count() > 0)
         {
-
+            foreach (var book in Model.books)
+            {
+                <tr>
+                    <td>@book.id</td>
+                    <td>@book.name</td>
+                    <td>@book.author.surname</td>
+                    <td>@book.genre.name</td>
+                    <td>@book.pageCount</td>
+                    <td>@book.point</td>
+                    <td>
+                        @if (book.status == "Available")
+                        {
+                            <span style="color: green;">@book.status</span>
+                        }
+                        else
+                        {
+                            <span style="color: red;">@book.status</span>
+                        }
+                    </td>                    
+                    <td><button class="btn btn-primary">View</button></td>
+                </tr>
+            }
         }
         else
         {

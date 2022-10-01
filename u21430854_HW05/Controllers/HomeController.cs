@@ -15,9 +15,9 @@ namespace u21430854_HW05.Controllers
         public ActionResult Index()
         {
             DefaultVM vm = new DefaultVM();
-            vm.bookAuthors = dataService.GetAuthors();
-            vm.bookTypes = dataService.GetTypes();
-            vm.books = new List<Books>();
+            DefaultVM.bookAuthors = dataService.GetAuthors();
+            DefaultVM.bookTypes = dataService.GetTypes();
+            vm.books = dataService.GetBooks();
 
             return View(vm);
         }
