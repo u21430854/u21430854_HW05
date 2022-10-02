@@ -396,10 +396,6 @@ namespace u21430854_HW05.Models
 
         public void BorrowBook(int studentId, int bookId)
         {
-            /*
-             INSERT INTO borrows (studentId, bookId, takenDate) 
-            VALUES (236, 91, CAST(N'2015-10-27T08:59:00.000' AS DateTime))
-             */
             connection = new SqlConnection(connectionString);
 
             try
