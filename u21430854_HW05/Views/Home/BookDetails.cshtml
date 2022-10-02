@@ -36,12 +36,23 @@
     <tbody>
         @if (Model.bookDetails.Count() > 0)
         {
+            int i = 0;
             foreach (var borrow in Model.bookDetails)
             {
+                i++;
                 <tr>
                     <td>@borrow.id</td>
                     <td>@borrow.takenDate.ToString("dd/MM/yyyy HH:mm:ss")</td>
-                    <td>@borrow.broughtDate.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                    <td>
+                        @if (i == 1 && borrow.book.status == "Out")
+                        {
+                            <span style="color: red;">Book out</span>
+                        }
+                        else
+                        {
+                            @borrow.broughtDate.ToString("dd/MM/yyyy HH:mm:ss")
+                        }
+                    </td>
                     <td>@borrow.student.name @borrow.student.surname</td>
                 </tr>
             }
