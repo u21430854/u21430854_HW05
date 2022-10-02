@@ -107,7 +107,11 @@ namespace u21430854_HW05.Models
                     };
 
                     //get book status
-                    book.status = SetBookStatus(book.id);
+                    string status;
+                    int studentId;
+                    SetBookStatus(book.id, out status, out studentId);
+                    book.status = status;
+                    book.lastBorrower = studentId;
 
                     allBooks.Add(book);
                 }
@@ -122,14 +126,14 @@ namespace u21430854_HW05.Models
             return allBooks;
         }
 
-        public string SetBookStatus(int id)
+        public void SetBookStatus(int id, out string status, out int studentId)
         {
-            string status = "";
             connection = new SqlConnection(connectionString);
 
             try
             {
-                //book status is determined using a stored procedure that accepts book Id and returns 'available' or 'out'
+                //book status is determined using a stored procedure that accepts book Id and
+                //returns 'available' or 'out' and the student id of the last person to borrow the book
                 //create command object for stored procedure
                 SqlCommand storedProc = new SqlCommand("sp_BookStatus", connection);
                 storedProc.CommandType = System.Data.CommandType.StoredProcedure;
@@ -137,16 +141,19 @@ namespace u21430854_HW05.Models
                 //add input (book id) parameter to stored procedure and execute
                 storedProc.Parameters.AddWithValue("@BookId", id);
 
-                //add output parameter to stored procedure
+                //add output parameters to stored procedure
                 storedProc.Parameters.Add("@BookStatus", System.Data.SqlDbType.VarChar, 50);
                 storedProc.Parameters["@BookStatus"].Direction = System.Data.ParameterDirection.Output;
+                storedProc.Parameters.Add("@LastBorrower", System.Data.SqlDbType.Int);
+                storedProc.Parameters["@LastBorrower"].Direction = System.Data.ParameterDirection.Output;
                 connection.Open();
                                 
                 //execute
                 storedProc.ExecuteNonQuery();
 
-                //store output parameter
+                //store output parameters
                 status = storedProc.Parameters["@BookStatus"].Value.ToString();
+                studentId = Convert.ToInt32(storedProc.Parameters["@LastBorrower"].Value);
             }
             catch (Exception)
             {
@@ -154,8 +161,6 @@ namespace u21430854_HW05.Models
             }
             finally
             { connection.Close(); }
-
-            return status;
         }
 
         public List<Books> SearchBooks(string bookname, string typeid, string authorid)
@@ -204,7 +209,11 @@ namespace u21430854_HW05.Models
                     };
 
                     //get book status
-                    book.status = SetBookStatus(book.id);
+                    string status;
+                    int studentId;
+                    SetBookStatus(book.id, out status, out studentId);
+                    book.status = status;
+                    book.lastBorrower = studentId;
 
                     filteredBooks.Add(book);
                 }
@@ -253,7 +262,12 @@ namespace u21430854_HW05.Models
                     //call a stored procedure, etc. It's a whole process
                     if (i == 1)
                     {
-                        borrowed.book.status = SetBookStatus(bookId);
+                        //get book status
+                        string status;
+                        int studentId;
+                        SetBookStatus(bookId, out status, out studentId);
+                        borrowed.book.status = status;
+                        borrowed.book.lastBorrower = studentId;
                     }
 
                     borrowed.takenDate = Convert.ToDateTime(readBorrows["takenDate"]);
