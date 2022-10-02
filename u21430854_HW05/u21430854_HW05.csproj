@@ -133,6 +133,7 @@
     <Compile Include="Models\Students.cs" />
     <Compile Include="Models\Types.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\BookDetailsVM.cs" />
     <Compile Include="ViewModels\DefaultVM.cs" />
   </ItemGroup>
   <ItemGroup>

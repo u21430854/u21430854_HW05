@@ -36,7 +36,7 @@ namespace u21430854_HW05.Controllers
 
         public ActionResult BookDetails(int bookId)
         {
-            DefaultVM vm = new DefaultVM();
+            BookDetailsVM vm = new BookDetailsVM();
             vm.bookDetails = dataService.GetBorrows(bookId);
             return View(vm);
         }

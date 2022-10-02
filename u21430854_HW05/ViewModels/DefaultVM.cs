@@ -14,9 +14,6 @@ namespace u21430854_HW05.ViewModels
         public static List<Authors> bookAuthors { get; set; }
 
         //for displaying books on index view
-        public List<Books> books { get; set; }
-
-        //for displaying book details on book details view        
-        public List<Borrows> bookDetails { get; set; }
+        public List<Books> books { get; set; }        
     }
 }
