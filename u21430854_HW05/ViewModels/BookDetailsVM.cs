@@ -10,5 +10,12 @@ namespace u21430854_HW05.ViewModels
     {
         //for displaying book details on book details view        
         public List<Borrows> bookDetails { get; set; }
+        //only need to set book id, name and status for 1st book
+        public Books currentbook { get; set; }
+
+        public BookDetailsVM()
+        {
+            currentbook = new Books();
+        }
     }
 }

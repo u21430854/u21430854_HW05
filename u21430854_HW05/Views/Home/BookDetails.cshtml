@@ -1,12 +1,12 @@
 ﻿@using u21430854_HW05.ViewModels
 @model BookDetailsVM
 @{
-    ViewBag.Title = Model.bookDetails[0].book.name;
+    ViewBag.Title = Model.currentbook.name;
 }
 
 <h2>
-    @Model.bookDetails[0].book.name -
-    @if (Model.bookDetails[0].book.status == "Available")
+    @Model.currentbook.name -
+    @if (Model.currentbook.status == "Available")
     {
         <span style="color: green;">Book Available</span>
     }
@@ -19,7 +19,7 @@
 <div class="row">
     <h4 class="col-10 text-left">Total borrows - @Model.bookDetails.Count()</h4>
     <div class="col-2 text-right">
-        <a class="btn btn-outline-primary" href="@Url.Action("Students", "Home")">View students</a>
+        <a class="btn btn-outline-primary" href="@Url.Action("Students", "Home", new { bookId = Model.currentbook.id})">View students</a>
     </div>    
 </div>
 <hr/>
@@ -44,7 +44,7 @@
                     <td>@borrow.id</td>
                     <td>@borrow.takenDate.ToString("dd/MM/yyyy HH:mm:ss")</td>
                     <td>
-                        @if (i == 1 && borrow.book.status == "Out")
+                        @if (i == 1 && Model.currentbook.status == "Out")
                         {
                             <span style="color: red;">Book out</span>
                         }
@@ -56,6 +56,10 @@
                     <td>@borrow.student.name @borrow.student.surname</td>
                 </tr>
             }
+        }
+        else
+        { 
+            <tr style="font-size: 1.5rem;"><td colspan="4">No one has borrowed this book</td></tr>
         }
     </tbody>
 </table>

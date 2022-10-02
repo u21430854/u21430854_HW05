@@ -16,7 +16,7 @@
 
 <div class="container-fluid mb-4">
     <div class="row">
-        @using (Html.BeginForm("Search", "Home", FormMethod.Post, new { @class = "col-10"}))
+        @using (Html.BeginForm("SearchBooks", "Home", FormMethod.Post, new { @class = "col-10"}))
         {
             <div class="row">
                 <!--Because I redirect to index view after every search, whatever is in the text box is cleared. This way, 
@@ -39,8 +39,6 @@
 
         <a class="btn btn-danger col-2" href="@Url.Action("Index", "Home")">Clear search</a>
     </div>
-    
-    
 </div>
 
 <table class="table table-striped">

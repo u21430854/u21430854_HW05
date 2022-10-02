@@ -1,7 +1,94 @@
-﻿
+﻿@using u21430854_HW05.ViewModels
+@model StudentsVM
 @{
     ViewBag.Title = "Students";
 }
 
-<h2>Students</h2>
+<head>
+    <style>
+        .search {
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
 
+<h2>Students - @Model.currentBook.name</h2><hr/>
+
+<!--Search-->
+<div class="container-fluid mb-4">
+    <div class="row">
+        @using (Html.BeginForm("SearchStudents", "Home", FormMethod.Post, new { @class = "col-10"}))
+        {
+            <div class="row">
+                <!--Because I redirect to index view after every search, whatever is in the text box is cleared. This way, 
+                    user can see what they they searched in text box-->
+                @if (!String.IsNullOrEmpty(ViewBag.SearchText))
+                {
+                    <input class="search col-6" id="name" name="name" type="text" value="@ViewBag.SearchText" />
+                }
+                else
+                {
+                    <input class="search col-6" id="name" name="name" type="text" placeholder="Search student name.." />
+                }                
+
+                @Html.DropDownList("studentClass", new SelectList(StudentsVM.classes), "Search class", new { @class = "search col-3" })
+                
+                <!--store book id for sending to controller and using in search query-->
+                <input type="hidden" id="bookId" name="bookId" value="@Model.currentBook.id"/>
+
+                <input type="submit" class="btn btn-success search col-2" value="Search" />
+            </div>
+        }
+
+        <a class="btn btn-danger col-2" href="@Url.Action("Students", "Home")">Clear search</a>
+    </div>
+</div>
+
+<table class="table table-striped">
+    <thead class="thead-light">
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Class</th>
+            <th>Points</th>
+            <th>
+                @if (Model.currentBook.status == "Available")
+                { <span>Borrow book</span> }
+                else
+                { <span>Return book</span> }
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.students.Count() > 0)
+        {
+            foreach (var student in Model.students)
+            {
+                <tr>
+                    <td>@student.id</td>
+                    <td>@student.name</td>
+                    <td>@student.surname</td>
+                    <td>@student.studentClass</td>
+                    <td>@student.point</td>
+                    <td>
+                        @if (Model.currentBook.status == "Out" && Model.currentBook.lastBorrower == student.id)
+                        { 
+                            <a class="btn btn-outline-primary" 
+                               href="@Url.Action("BookDetails", "Home", new { bookId = Model.currentBook.id, returning = true })">
+                                Return book
+                            </a>
+                        }
+                        else if (Model.currentBook.status == "Available")
+                        { 
+                            <a class="btn btn-outline-primary" 
+                               href="@Url.Action("BookDetails", "Home", new { bookId = Model.currentBook.id, borrowing = true })">
+                                Borrow book
+                            </a>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

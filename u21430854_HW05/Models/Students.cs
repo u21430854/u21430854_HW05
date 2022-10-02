@@ -10,8 +10,6 @@ namespace u21430854_HW05.Models
         public int id { get; set; }
         public string name { get; set; }
         public string surname { get; set; }
-        public DateTime birthDate { get; set; }
-        public string gender { get; set; }
         public string studentClass { get; set; }
         public int point { get; set; }
     }

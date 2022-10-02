@@ -15,6 +15,7 @@ namespace u21430854_HW05.Models
         public Authors author { get; set; }
         public Types genre { get; set; }
         public string status { get; set; }
+        //id of last person to borrow this book
         public int lastBorrower { get; set; }
     }
 }

@@ -107,9 +107,7 @@ namespace u21430854_HW05.Models
                     };
 
                     //get book status
-                    string status;
-                    int studentId;
-                    SetBookStatus(book.id, out status, out studentId);
+                    SetBookStatus(book.id, out string status, out int studentId);
                     book.status = status;
                     book.lastBorrower = studentId;
 
@@ -209,9 +207,7 @@ namespace u21430854_HW05.Models
                     };
 
                     //get book status
-                    string status;
-                    int studentId;
-                    SetBookStatus(book.id, out status, out studentId);
+                    SetBookStatus(book.id, out string status, out int studentId);
                     book.status = status;
                     book.lastBorrower = studentId;
 
@@ -235,11 +231,9 @@ namespace u21430854_HW05.Models
 
             try
             {
-                string borrowsQuery = "select borrowId, takenDate, broughtDate, students.name as studentName, surname, " +
-                                       "books.name as bookName " +
+                string borrowsQuery = "select borrowId, takenDate, broughtDate, students.name as studentName, surname " +
                                        "from borrows INNER JOIN students " +
                                        "ON borrows.studentId = students.studentId " +
-                                       "INNER JOIN books ON borrows.bookId = books.bookId " +
                                        "WHERE borrows.bookId = " + bookId +
                                        " ORDER BY borrowId desc";
 
@@ -255,21 +249,6 @@ namespace u21430854_HW05.Models
                     borrowed.id = Convert.ToInt32(readBorrows["borrowId"]);
                     borrowed.student.name = readBorrows["studentName"].ToString();
                     borrowed.student.surname = readBorrows["surname"].ToString();
-                    borrowed.book.id = bookId;
-                    borrowed.book.name = readBorrows["bookName"].ToString();
-
-                    //I don't want to have to set book status more than 1ce because it has to read from the database again,
-                    //call a stored procedure, etc. It's a whole process
-                    if (i == 1)
-                    {
-                        //get book status
-                        string status;
-                        int studentId;
-                        SetBookStatus(bookId, out status, out studentId);
-                        borrowed.book.status = status;
-                        borrowed.book.lastBorrower = studentId;
-                    }
-
                     borrowed.takenDate = Convert.ToDateTime(readBorrows["takenDate"]);
                     borrowed.broughtDate = Convert.ToDateTime(readBorrows["broughtDate"]);
                     allBorrows.Add(borrowed);
@@ -285,11 +264,131 @@ namespace u21430854_HW05.Models
             return allBorrows;
         }
 
-        public List<Students> GetStudents(int bookId)
+        public List<string> GetStudentClasses()
+        {
+            List<string> studentclasses = new List<string>();
+            connection = new SqlConnection(connectionString);
+
+            try
+            {
+                string classesQuery = "SELECT DISTINCT class FROM students " +
+                                      "ORDER BY class";
+
+                SqlCommand selectClasses = new SqlCommand(classesQuery, connection);
+                connection.Open();
+
+                SqlDataReader readClasses = selectClasses.ExecuteReader();
+                while (readClasses.Read())
+                {
+                    studentclasses.Add(readClasses["class"].ToString());
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            { connection.Close(); }
+
+            return studentclasses;
+        }
+
+        public List<Students> GetStudents()
         {
             List<Students> students = new List<Students>();
+            connection = new SqlConnection(connectionString);
+
+            try
+            {
+                SqlCommand selectStudents = new SqlCommand("SELECT studentId, name, surname, class, point FROM students", connection);
+                connection.Open();
+
+                SqlDataReader readStudents = selectStudents.ExecuteReader();
+                while (readStudents.Read())
+                {
+                    Students student = new Students();
+                    student.id = Convert.ToInt32(readStudents["studentId"]);
+                    student.name = readStudents["name"].ToString();
+                    student.surname = readStudents["surname"].ToString();
+                    student.studentClass = readStudents["class"].ToString();
+                    student.point = Convert.ToInt32(readStudents["point"]);
+                    students.Add(student);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            { connection.Close(); }
 
             return students;
+        }
+
+        public List<Students> SearchStudents(string name, string studentClass)
+        {
+            List<Students> filteredStudents = new List<Students>();
+            connection = new SqlConnection(connectionString);
+
+            try
+            {
+                string studentQuery = "SELECT studentId, name, surname, class, point FROM students " +
+                    "WHERE name LIKE '%" + name + "%' AND CLASS LIKE '%" + studentClass + "%'";
+
+                SqlCommand selectStud = new SqlCommand(studentQuery, connection);
+                connection.Open();
+
+                SqlDataReader readStud = selectStud.ExecuteReader();
+                while (readStud.Read())
+                {
+                    Students student = new Students();
+                    student.id = Convert.ToInt32(readStud["studentId"]);
+                    student.name = readStud["name"].ToString();
+                    student.surname = readStud["surname"].ToString();
+                    student.studentClass = readStud["class"].ToString();
+                    student.point = Convert.ToInt32(readStud["point"]);
+                    filteredStudents.Add(student);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            { connection.Close(); }
+
+            return filteredStudents;
+        }
+
+        public Books GetCurrentBook(int bookId)
+        {
+            Books book = new Books();
+            connection = new SqlConnection(connectionString);
+
+            try
+            {
+                SqlCommand selectBook = new SqlCommand("SELECT bookId, name FROM books WHERE bookId = " + bookId, connection);
+                connection.Open();
+
+                SqlDataReader readBook = selectBook.ExecuteReader();
+                while (readBook.Read())
+                {
+                    book.id = Convert.ToInt32(readBook["bookId"]);
+                    book.name = readBook["name"].ToString();
+                    //get book status and last borrower
+                    SetBookStatus(bookId, out string status, out int studentId);
+                    book.status = status;
+                    book.lastBorrower = studentId;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            { connection.Close(); }
+
+            return book;
         }
 
         public void BorrowBook(int bookId)
