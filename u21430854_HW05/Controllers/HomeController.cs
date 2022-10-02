@@ -62,6 +62,7 @@ namespace u21430854_HW05.Controllers
             return View(vm);
         }
 
+        [HttpPost]
         public ActionResult SearchStudents(string bookId, string name, string studentClass)
         {
             //get filtered list and current book
