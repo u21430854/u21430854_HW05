@@ -222,6 +222,51 @@ namespace u21430854_HW05.Models
         public List<Borrows> GetBorrows(int bookId)
         {
             List<Borrows> allBorrows = new List<Borrows>();
+            connection = new SqlConnection(connectionString);
+
+            try
+            {
+                string borrowsQuery = "select borrowId, takenDate, broughtDate, students.name as studentName, surname, " +
+                                       "books.name as bookName " +
+                                       "from borrows INNER JOIN students " +
+                                       "ON borrows.studentId = students.studentId " +
+                                       "INNER JOIN books ON borrows.bookId = books.bookId " +
+                                       "WHERE borrows.bookId = " + bookId +
+                                       " ORDER BY borrowId desc";
+
+                SqlCommand selectBorrows = new SqlCommand(borrowsQuery, connection);
+                connection.Open();
+
+                SqlDataReader readBorrows = selectBorrows.ExecuteReader();
+                int i = 0;
+                while (readBorrows.Read())
+                {
+                    i++;
+                    Borrows borrowed = new Borrows();
+                    borrowed.id = Convert.ToInt32(readBorrows["borrowId"]);
+                    borrowed.student.name = readBorrows["studentName"].ToString();
+                    borrowed.student.surname = readBorrows["surname"].ToString();
+                    borrowed.book.id = bookId;
+                    borrowed.book.name = readBorrows["bookName"].ToString();
+
+                    //I don't want to have to set book status more than 1ce because it has to read from the database again,
+                    //call a stored procedure, etc. It's a whole process
+                    if (i == 1)
+                    {
+                        borrowed.book.status = SetBookStatus(bookId);
+                    }
+
+                    borrowed.takenDate = Convert.ToDateTime(readBorrows["takenDate"]);
+                    borrowed.broughtDate = Convert.ToDateTime(readBorrows["broughtDate"]);
+                    allBorrows.Add(borrowed);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            { connection.Close(); }
 
             return allBorrows;
         }

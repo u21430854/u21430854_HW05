@@ -34,9 +34,11 @@ namespace u21430854_HW05.Controllers
             return View("Index", vm);
         }
 
-        public ActionResult BookDetails()
+        public ActionResult BookDetails(int bookId)
         {
-            return View();
+            DefaultVM vm = new DefaultVM();
+            vm.bookDetails = dataService.GetBorrows(bookId);
+            return View(vm);
         }
 
         public ActionResult Students()

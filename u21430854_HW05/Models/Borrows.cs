@@ -10,9 +10,16 @@ namespace u21430854_HW05.Models
         public int id { get; set; }
         //only need to set student name + surname
         public Students student { get; set; }
-        //only need to set book name
+        //only need to set book id, name and status for 1st book
         public Books book { get; set; }
         public DateTime takenDate { get; set; }
         public DateTime broughtDate { get; set; }
+
+        public Borrows()
+        {
+            student = new Students();
+            book = new Books();
+        }
+
     }
 }
