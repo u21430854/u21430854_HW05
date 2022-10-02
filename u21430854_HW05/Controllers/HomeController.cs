@@ -27,6 +27,10 @@ namespace u21430854_HW05.Controllers
         {
             DefaultVM vm = new DefaultVM();
             vm.books = dataService.SearchBooks(bookName, typeid, authorid);
+
+            if (!String.IsNullOrEmpty(bookName))
+                ViewBag.SearchText = bookName;
+
             return View("Index", vm);
         }
 

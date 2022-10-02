@@ -19,7 +19,16 @@
         @using (Html.BeginForm("Search", "Home", FormMethod.Post, new { @class = "col-10"}))
         {
             <div class="row">
-                <input class="search col-5" id="book-name" name="bookName" type="text" placeholder="Search book name.." />
+                <!--Because I redirect to index view after every search, whatever is in the text box is cleared. This way, 
+                    user can see what they they searched in text box-->
+                @if (!String.IsNullOrEmpty(ViewBag.SearchText))
+                {
+                    <input class="search col-5" id="book-name" name="bookName" type="text" value="@ViewBag.SearchText" />
+                }
+                else
+                {
+                    <input class="search col-5" id="book-name" name="bookName" type="text" placeholder="Search book name.." />
+                }                
 
                 @Html.DropDownList("authorid", new SelectList(DefaultVM.bookAuthors, "id", "surname"), "Search author", new { @class = "search col-2" })
                 @Html.DropDownList("typeid", new SelectList(DefaultVM.bookTypes, "id", "name"), "Search genre", new { @class = "search col-2" })
@@ -75,7 +84,7 @@
         }
         else
         {
-            <tr style="font-size: 2rem;"><td colspan="8">There are no books in the library</td></tr>
+            <tr style="font-size: 1.5rem;"><td colspan="8">There are no books that the match the search</td></tr>
         }
     </tbody>
 </table>
