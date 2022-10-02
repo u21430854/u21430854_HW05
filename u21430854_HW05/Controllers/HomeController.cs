@@ -34,20 +34,11 @@ namespace u21430854_HW05.Controllers
             return View("Index", vm);
         }
 
-        public ActionResult BookDetails(int bookId, bool borrowing = false, bool returning = false)
+        public ActionResult BookDetails(int bookId)
         {
             BookDetailsVM vm = new BookDetailsVM();
             vm.bookDetails = dataService.GetBorrows(bookId);
             vm.currentbook = dataService.GetCurrentBook(bookId);
-
-            if (borrowing)
-            {
-                //borrow book
-            }
-            else if (returning)
-            {
-                //return book
-            }
 
             return View(vm);
         }
@@ -74,6 +65,23 @@ namespace u21430854_HW05.Controllers
                 ViewBag.SearchText = name;
 
             return View("Students", vm);
+        }
+
+        public ActionResult BorrowReturn(int studId, int bookId, bool borrowing = false, bool returning = false)
+        {
+
+            if (borrowing)
+            {
+                //borrow book
+                dataService.BorrowBook(studId, bookId);
+            }
+            else if (returning)
+            {
+                //return book
+                dataService.ReturnBook(bookId);
+            }
+
+            return RedirectToAction("BookDetails", new { bookId = bookId });
         }
     }
 }

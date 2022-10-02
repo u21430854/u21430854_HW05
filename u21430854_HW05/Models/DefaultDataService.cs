@@ -250,7 +250,10 @@ namespace u21430854_HW05.Models
                     borrowed.student.name = readBorrows["studentName"].ToString();
                     borrowed.student.surname = readBorrows["surname"].ToString();
                     borrowed.takenDate = Convert.ToDateTime(readBorrows["takenDate"]);
-                    borrowed.broughtDate = Convert.ToDateTime(readBorrows["broughtDate"]);
+                    if (readBorrows["broughtDate"] == null)
+                    { borrowed.broughtDate = ""; }
+                    else
+                    { borrowed.broughtDate = readBorrows["broughtDate"].ToString(); }                    
                     allBorrows.Add(borrowed);
                 }
             }
@@ -391,13 +394,57 @@ namespace u21430854_HW05.Models
             return book;
         }
 
-        public void BorrowBook(int bookId)
+        public void BorrowBook(int studentId, int bookId)
         {
+            /*
+             INSERT INTO borrows (studentId, bookId, takenDate) 
+            VALUES (236, 91, CAST(N'2015-10-27T08:59:00.000' AS DateTime))
+             */
+            connection = new SqlConnection(connectionString);
 
+            try
+            {
+                string insert = "INSERT INTO borrows (studentId, bookId, takenDate) " +
+                                "VALUES(" + studentId + ", " + bookId + ", CAST(N'" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "' AS DateTime))";
+
+                SqlCommand newBorrow = new SqlCommand(insert, connection);
+                connection.Open();
+
+                newBorrow.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            { connection.Close(); }
         }
 
         public void ReturnBook(int bookId)
         {
+            connection = new SqlConnection(connectionString);
+
+            try
+            {
+                //sp_ReturnBook is a stored procedure that takes bookId as input, uses it to find which row in the borrows
+                //table needs to be updated and updates the broughtDate value of that record
+                //create command object for stored procedure
+                SqlCommand storedProc = new SqlCommand("sp_ReturnBook", connection);
+                storedProc.CommandType = System.Data.CommandType.StoredProcedure;
+
+                //add input (book id) parameter to stored procedure and execute
+                storedProc.Parameters.AddWithValue("@BookId", bookId);
+                connection.Open();
+
+                //execute
+                storedProc.ExecuteNonQuery();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            { connection.Close(); }
 
         }
     }

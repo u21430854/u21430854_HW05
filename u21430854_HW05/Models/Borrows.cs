@@ -11,7 +11,7 @@ namespace u21430854_HW05.Models
         //only need to set student name + surname
         public Students student { get; set; }
         public DateTime takenDate { get; set; }
-        public DateTime broughtDate { get; set; }
+        public string broughtDate { get; set; }
 
         public Borrows()
         {

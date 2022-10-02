@@ -75,14 +75,14 @@
                         @if (Model.currentBook.status == "Out" && Model.currentBook.lastBorrower == student.id)
                         { 
                             <a class="btn btn-outline-primary" 
-                               href="@Url.Action("BookDetails", "Home", new { bookId = Model.currentBook.id, returning = true })">
+                               href="@Url.Action("BorrowReturn", "Home", new { studId = student.id, bookId = Model.currentBook.id, returning = true })">
                                 Return book
                             </a>
                         }
                         else if (Model.currentBook.status == "Available")
                         { 
                             <a class="btn btn-outline-primary" 
-                               href="@Url.Action("BookDetails", "Home", new { bookId = Model.currentBook.id, borrowing = true })">
+                               href="@Url.Action("BorrowReturn", "Home", new { studId = student.id, bookId = Model.currentBook.id, borrowing = true })">
                                 Borrow book
                             </a>
                         }
